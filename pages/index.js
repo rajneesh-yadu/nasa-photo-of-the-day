@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import Head from 'next/head'
 import Image from 'next/image'
 
@@ -25,6 +25,14 @@ export default function NasaPhotoOfTheDay(props) {
     }
   }
 
+  const handleSearchButton = async (inputDate) => {
+    const response = await fetch(
+      `${END_POINT}date=${inputDate}&api_key=${API_KEY}`
+    )
+    const data = await response.json()
+    setNasaData(data)
+  }
+
   const handleRandomSearch = async () => {
     const response = await fetch(`${END_POINT}count=1&api_key=${API_KEY}`)
     const data = await response.json()
@@ -44,6 +52,7 @@ export default function NasaPhotoOfTheDay(props) {
         data={nasaData}
         search={handleSearch}
         randomSearch={handleRandomSearch}
+        handleSearchButton={handleSearchButton}
       />
     </>
   )
@@ -51,25 +60,32 @@ export default function NasaPhotoOfTheDay(props) {
 
 const Nasa = (props) => {
   const [isHd, setIsHd] = useState(false)
+  const dateRef = useRef(today)
   const {
-    data: { copyright, title, explanation, hdurl, media_type, url },
+    data: { copyright, title, explanation, hdurl, url },
     search,
     randomSearch,
+    handleSearchButton,
   } = props
   return (
     <div className={`flex-col flex ${!isHd && 'lg:flex-row'} p-2`}>
-      <div
-        className={`flex gap-2 justify-between ${!isHd && 'lg:hidden'} h-auto`}
-      >
+      <div className={`flex justify-between ${!isHd && 'lg:hidden'} h-auto`}>
         <input
+          ref={dateRef}
           type='date'
-          className='border-black border-2 p-2  bg-gray-400 text-gray-900 w-full text-xs basis-1/2'
+          className='border-black border-2 p-2  bg-gray-400 text-gray-900 w-full text-xs basis-1/3'
           onKeyPress={(e) => search(e)}
           min='1995-06-16'
           max={`${year}-${month.toString().length === 1 && 0}${month + 1}-${
             date - 1
           }`}
         ></input>
+        <button
+          onClick={() => handleSearchButton(dateRef.current.value)}
+          className='border-black border-2 p-2  bg-gray-400 text-gray-900 w-64 text-xs basis-1/12 mr-2'
+        >
+          Search
+        </button>
         <button
           onClick={() => setIsHd((p) => !p)}
           className='border-black border-2 p-2  bg-gray-400 text-gray-900 w-64 text-xs basis-1/4'
@@ -110,6 +126,7 @@ const Nasa = (props) => {
               date - 1
             }`}
           ></input>
+
           <button
             onClick={() => setIsHd((p) => !p)}
             className='border-black border-2 p-2  bg-gray-400 text-gray-900 w-64'
