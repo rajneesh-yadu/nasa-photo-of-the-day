@@ -36,7 +36,7 @@ export default function NasaPhotoOfTheDay(props) {
         <title>Photos Of The Day - NASA</title>
         <meta
           name='description'
-          content='This web app shows nasa images using nasa free APIs- Integrated by Rajneesh Yadu; A full stack developer'
+          content='This web app shows nasa images using nasa free APIs- Integrated by Rajneesh Yadu; A full stack developer with nextjs framework hosted in vercel.'
         />
         <link rel='icon' href='/favicon.ico' />
       </Head>
